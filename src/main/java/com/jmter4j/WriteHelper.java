@@ -6,6 +6,7 @@ import org.apache.jmeter.protocol.java.sampler.JavaSamplerClient;
 import org.apache.jmeter.protocol.java.sampler.JavaSamplerContext;
 import org.apache.jmeter.samplers.SampleResult;
 
+import java.io.File;
 import java.io.IOException;
 
 
@@ -14,13 +15,15 @@ import java.io.IOException;
  */
 public class WriteHelper implements JavaSamplerClient{
     private SampleResult results;
-    private String fileDir;
+    private String fileParent;
+    private String fileName;
     private String text;
 
     public Arguments getDefaultParameters(){
         Arguments params = new Arguments();
-        params.addArgument("saveFile","D:\\tmp\\resp.txt");
-        params.addArgument("context","text commit.");
+        params.addArgument("fileParent","D:\\tmp\\");
+        params.addArgument("fileName","resp.txt");
+        params.addArgument("context","test context.");
 
         return params;
     }
@@ -30,17 +33,22 @@ public class WriteHelper implements JavaSamplerClient{
     }
 
     public SampleResult runTest(JavaSamplerContext context) {
-        fileDir = context.getParameter("saveFile");
+        fileParent = context.getParameter("fileParent");
+        fileName = context.getParameter("fileName");
         text =    context.getParameter("context");
 
         results = new SampleResult();
 
         results.sampleStart();
+
         try {
-            FileHelper.randomWrite(fileDir, text);
+
+            FileHelper.randomWrite(fileParent, fileName, text);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         results.sampleEnd();
 
         return results;

@@ -5,7 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-/**将内容追加到文件
+/**
+ * 将内容追加到文件
  * Created by yang.zhou on 2017/9/6.
  */
 public class FileHelper {
@@ -18,7 +19,7 @@ public class FileHelper {
 //    }
 
 
-    public static void randomRed(String path, int pointer){
+    public static void randomRed(String path, int pointer) {
 
 
         try {
@@ -36,7 +37,7 @@ public class FileHelper {
             int hasRead;
             hasRead = 0;
 
-            while ((hasRead=randomFile.read(buffer))>0){
+            while ((hasRead = randomFile.read(buffer)) > 0) {
 
                 System.out.print(new String(buffer, 0, hasRead));
             }
@@ -51,23 +52,39 @@ public class FileHelper {
     /*
     * 向文件中追加数据
     * */
-    public static void randomWrite(String path, String text) throws IOException {
+    public static void randomWrite(String fileParent, String fileName, String text) throws IOException {
 
+        RandomAccessFile randomFile = null;
+        File file = null;
 
         try {
-            RandomAccessFile randomFile = new RandomAccessFile(new File(path), "rw");
+            file = new File(fileParent);
+            if (!file.exists()) {
+                System.out.println("路径不存在，开始创建目录.");
+                if(file.mkdirs())
+                    System.out.println("目录创建成功.");
+            }
+            if (file.isDirectory()) {
+                file = new File(file, fileName);
+            }
 
-            System.out.println("开始保存内容："+text);
+            randomFile = new RandomAccessFile(file, "rw");
+
+            System.out.println("开始保存内容：\r\n" + text);
 
             // 将指针移到文件最后
             randomFile.seek(randomFile.length());
-
-            randomFile.write("\r\n".getBytes());
             randomFile.write(text.getBytes());
+            randomFile.write("\r\n".getBytes());
             System.out.println("保存成功");
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } finally {
+
+            if (randomFile != null)
+                randomFile.close();
+
         }
 
     }
